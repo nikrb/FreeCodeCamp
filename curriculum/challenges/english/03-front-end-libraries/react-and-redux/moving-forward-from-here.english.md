@@ -24,7 +24,7 @@ Log the message <code>'Now I know React and Redux!'</code> to the console.
 ```yml
 tests:
   - text: The message <code>Now I know React and Redux!</code> should be logged to the console.
-    testString: getUserInput => assert(/console.log\(("|')Now I know React and Redux!\1\)/.test(getUserInput('index')), 'The message <code>Now I know React and Redux!</code> should be logged to the console.');
+    testString: (_, stripWhiteSpace) => assert(/console.log\(("|')Now I know React and Redux!\1\)/.test(stripWhiteSpace()), 'The message <code>Now I know React and Redux!</code> should be logged to the console.');
 
 ```
 
@@ -72,7 +72,7 @@ tests:
 
 
 ```js
-console.log('Now I know React and Redux!');
+console.log( 'Now I Know React and Redux!');
 ```
 
 </section>

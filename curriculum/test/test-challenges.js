@@ -292,7 +292,25 @@ async function createTestRunnerForDOMChallenge(
     async (sources, loadEnzyme) => {
       const code = sources && 'index' in sources ? sources['index'] : '';
       const getUserInput = fileName => sources[fileName];
-      await document.__initTestFrame({ code, getUserInput, loadEnzyme });
+      const stripWhiteSpace = () => {
+        const re = /\((.*)\)/g;
+        const ret = code.replace(re, (match, params) => {
+          const paramArr = params.split(',').map(c => {
+            if (/"|'/.test(c)) {
+              return c.trim();
+            }
+            return c.replace(/\s/g, '');
+          });
+          return `(${paramArr})`;
+        });
+        return ret;
+      };
+      await document.__initTestFrame({
+        code,
+        getUserInput,
+        loadEnzyme,
+        stripWhiteSpace
+      });
     },
     sources,
     loadEnzyme
@@ -307,7 +325,9 @@ async function createTestRunnerForDOMChallenge(
         }, testString)
       ]);
       if (!pass) {
-        throw AssertionError(`${text}\n${err.message}`);
+        // AssertionError is returning undefined
+        // throw AssertionError(`${text}\n${err.message}`);
+        assert.fail(`${text}\n${err.message}`);
       }
     } catch (err) {
       throw typeof err === 'string'
